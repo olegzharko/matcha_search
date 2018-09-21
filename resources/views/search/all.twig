@@ -1,0 +1,17 @@
+{% extends 'templates/app.twig' %}
+
+{% block content %}
+
+    <form action="{{ path_for('search.like') }}" method="post">
+        {% for user in allUserForSearch %}
+            <div class="topic">
+                <p>{{ user.username }}</p>
+                <input type="text" name="liked_id", value="{{ user.id }}">
+                <input type="submit" name="like" value="Like">
+                {#<input type="submit" name="unlike" value="{{ user.id }}">#}
+            </div>
+        {% endfor %}
+        {{ csrf.field | raw }}{# raw скроет строку #}
+    </form>
+
+{% endblock %}
