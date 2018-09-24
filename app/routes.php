@@ -43,6 +43,6 @@ $app->group('', function () {
 	$this->post('/user/edit/photo', 'PhotoController:postPhotoProfile')->setName('user.edit.photo_post');
 
 	$this->get('/search/all', 'SearchController:getAllProfile')->setName('search.all');
-	$this->post('/search/like', 'SearchController:getLike')->setName('search.like');
-//	$this->post('/search/unlike', 'SearchController:getUnlike')->setName('search.all');
+	$this->post('/search/like', 'LikedController:getLike')->setName('search.like');
+	$this->post('/search/unlike', 'LikedController:getUnlike')->setName('search.unlike');
 })->add(new AuthMiddleware($container));

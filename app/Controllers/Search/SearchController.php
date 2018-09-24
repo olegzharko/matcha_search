@@ -6,8 +6,10 @@ use Matcha\Controllers\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Matcha\Models\User;
-use Matcha\Models\Liked;
+use Matcha\Models\Likes;
 use Matcha\Models\About;
+use Respect\Validation\Validator as v;
+use Matcha\Controllers\Search\MatchaController;
 
 class SearchController extends Controller
 {
@@ -50,69 +52,4 @@ class SearchController extends Controller
 
         return $this->view->render($response, 'search/all.twig');
     }
-
-    public function getLike($request, $response)
-    {
-        $validation = $this->validator->validate($request, [
-            'like' => v::notEmpty(),
-            'liked_id' => v::notEmpty(),
-        ]);
-
-        if ($validation->failed()) {
-            $this->flash->addMessage('info', 'Fail');
-            return $response->withRedirect($this->router->pathFor('search.all'));
-        }
-
-        Liked::create([
-            'user_id' => $_SESSION['user'],
-            'liked_id' => $request->getParam('liked_id'),
-        ]);
-
-        $user_id = $request->getParam('liked_id');
-
-        $likedUser = User::where('id', $user_id)->first();
-
-        $newRating = $likedUser->rating + 1;
-
-        // нужна новая графа в базе для рейтинка
-        User::where('id', $user_id)->update([
-            'rating' => $newRating,
-        ]);
-
-        return $response->withRedirect($this->router->pathFor('search.all'));
-    }
-
-//    public function getUnlike($request, $response)
-//    {
-//        $validation = $this->validator->validate($request, [
-//            'unlike' => v::notEmpty(),
-//            'liked_id' => v::notEmpty(),
-//        ]);
-//
-//        if ($validation->failed()) {
-//            $this->flash->addMessage('info', 'Fail');
-//            return $response->withRedirect($this->router->pathFor('search.all'));
-//        }
-//
-//        Liked::where([
-//            'user_id' => $_SESSION['user'],
-//            'liked_id' => $request->getParam('liked_id'),
-//        ])->delete();
-//
-//        $user_id = $request->getParam('liked_id');
-//
-//        $likedUser = User::where('id', $user_id)->first();
-//
-//        $newRating = $likedUser->rating - 1;
-//
-//        // нужна новая графа в базе для рейтинка
-//        if ($newRating >= 0)
-//        {
-//            User::where('id', $user_id)->update([
-//                'rating' => $newRating,
-//            ]);
-//        }
-//
-//        return $response->withRedirect($this->router->pathFor('search.all'));
-//    }
 }
